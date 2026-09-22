@@ -1,0 +1,126 @@
+graph_construction:
+  build_graphs:
+    used_method: dynamic_trace
+    use_all_files: True
+    time_window_size: 15.0
+    use_hashed_label: True
+    external_graph_dir: ""
+    node_label_features:
+      subject: type, path, cmd_line
+      file: type, path
+      netflow: type, remote_ip, remote_port
+
+edge_featurization:
+  embed_nodes:
+    emb_dim: 128
+    used_method: feature_word2vec
+    use_seed: True
+    feature_word2vec:
+      show_epoch_loss: True
+      window_size: 5
+      min_count: 1
+      use_skip_gram: True
+      num_workers: 6
+      epochs: 50
+      compute_loss: True
+      negative: 5
+      use_node_types: False
+      use_cmd: True
+      use_port: False
+      decline_rate: 30
+  embed_edges:
+    to_remove: True
+    prebuilt_dir: ""
+
+detection:
+  gnn_training:
+    used_method: dynamic_trace
+    use_seed: True
+    num_epochs: 6
+    lr: 0.00001
+    weight_decay: 0.00001
+    node_hid_dim: 128
+    node_out_dim: 64
+    encoder:
+      use_node_type_in_node_feats: True
+      neighbor_sampling: []
+      edge_features: edge_type
+      use_node_feats_in_gnn: True
+      neighbor_size: 20
+      temporal_dim: 100
+      batch_size: 1024
+      graph_attention:
+        dropout: 0.5
+        activation: relu
+        num_heads: 8
+    decoder:
+      used_methods: predict_edge_type
+      predict_edge_type:
+        used_method: custom
+        custom:
+          dropout: 0.0
+          num_layers: 2
+          activation: relu
+
+  gnn_testing:
+    threshold_method: str
+    # Main-paper online results must use 1. Larger values are throughput ablations.
+    causal_batch_size: 1
+    # Avoid selecting a checkpoint on test labels. Report the final trained epoch.
+    checkpoint_policy: latest
+    # Versioned so corrected train-to-test edge indexing gets isolated artifacts.
+    causal_storage_version: train_split_aligned_v2
+  evaluation:
+    viz_malicious_nodes: False
+    ground_truth_version: darpa
+    used_method: node_evaluation
+    node_evaluation:
+      threshold_method: max_val_loss
+      use_dst_node_loss: True
+      use_kmeans: True
+      kmeans_top_K: 20
+
+attack_reconstruction :
+  tracing:
+    used_method: online_dynamic
+    depimpact:
+      used_method: component
+      score_method: degree
+      workers: 8
+      visualize: False
+    online_dynamic:
+      enabled: True
+      threshold_method: conformal
+      calibration_alpha: 0.001
+      # Node evidence is updated in-stream; validation nodes calibrate the final gate.
+      node_gate_enabled: True
+      node_gate_alpha: 0.01
+      node_gate_top_k: 3
+      context_alpha: 0.01
+      cutoff_pvalue: 0.0001
+      activation_margin: 1.0
+      context_margin: 0.65
+      # Retained evidence is causal and bounded by a recent-context horizon.
+      retained_evidence_margin: 1.0
+      retained_event_floor: 0.2
+      context_horizon_windows: 4
+      cutoff_risk_threshold: 0.78
+      cut_override_margin: 1.5
+      decision_policy: conformal_risk
+      update_rule: max
+      ema_alpha: 0.2
+      context_enabled: True
+      prediction_enabled: True
+      cutoff_enabled: True
+      containment_scope: incident
+      cut_target_policy: causal_actor
+      min_attack_support: 2
+      prediction_prior_strength: 0.25
+      min_prediction_confidence: 0.55
+      cutoff_stages: execution,persistence_or_lateral,c2_or_exfiltration
+      # Stream rows directly to disk. Zero means no evaluation-biased truncation.
+      max_logged_events: 0
+      max_dynamic_edges: 0
+      max_attack_nodes: 200000
+      max_attack_edges: 300000
+      log_all_events: True
