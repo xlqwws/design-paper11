@@ -1,0 +1,8 @@
+dataset,seed,mode,events,trace_mean_us,trace_p95_us,trace_p99_us,trace_throughput_eps,result_tier,scan_seconds,throughput_edges_per_second,bounded_state_bytes
+E3-CADETS-Causal,0,GPU_GNN_plus_node_gate,19129,39.9720685869622,56.7,264.3720000000001,25017.46933172662,sampled_pilot,,,
+E3-CADETS-Causal,1,GPU_GNN_plus_node_gate,19129,35.906937111192434,50.6,69.3,27849.7716723461,sampled_pilot,,,
+E3-CADETS-Causal,2,GPU_GNN_plus_node_gate,19129,40.90777876522558,52.8,179.94800000000103,24445.22851605105,sampled_pilot,,,
+E3-CADETS-Causal,3,GPU_GNN_plus_node_gate,19129,41.09546761461655,54.3,191.5200000000012,24333.58367832094,sampled_pilot,,,
+E3-CADETS-Causal,4,GPU_GNN_plus_node_gate,19129,39.83499398818548,51.7,69.57200000000012,25103.555941205526,sampled_pilot,,,
+StreamSpot,0,bounded_full_stream_sketch,89770902,,,,,publication_full,106.3067114,844451.8771935222,8193600.0
+Unicorn-Wget,0,bounded_full_stream_sketch,26750273,,,,,publication_full,133.8511611,199850.884969275,7885500.0

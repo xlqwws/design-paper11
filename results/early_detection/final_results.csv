@@ -1,0 +1,2 @@
+protocol_version,dataset,method,event_budget,raw_edges_scanned,train_graphs,calibration_graphs,test_graphs,attack_graphs,calibration_alpha,threshold,reported_graphs,precision,recall,f1,mcc,auroc,average_precision,scan_seconds,causal_decision
+tifs-fixed-budget-early-detection-v1,StreamSpot,online_dynamic_structure_sketch_knn,25000,89770902,300,100,200,100,0.05,5.281912409,112,0.892857143,1,0.943396226,0.88640526,0.9603,0.876158024,102.9090416,uses exactly the first event_budget edges of each graph
